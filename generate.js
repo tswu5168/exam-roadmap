@@ -359,8 +359,8 @@ const html = `<!DOCTYPE html>
     <div class="countdown-row">
       <div class="metric"><b id="today-date">–</b><span>今天</span></div>
       <div class="metric"><b id="days-left">–</b><span>距會考還有</span></div>
-      <div class="metric"><b>${examPhases.length} 場</b><span>考試階段（${typeSummary}）</span></div>
-      <div class="metric"><b id="week-position">–</b><span>目前進度（共 ${totalWeeks} 週）</span></div>
+      <div class="metric"><b>${examPhases.length} 階段</b><span>考試階段（${typeSummary}）</span></div>
+      <div class="metric"><b id="week-position">–</b><span>倒數進度（共 ${totalWeeks} 週）</span></div>
     </div>
 
     <div class="principles">
@@ -435,7 +435,8 @@ ${phasesHtml}
     flag.textContent = '現在';
     dateCell.appendChild(flag);
 
-    weekEl.textContent = '第 ' + matched.getAttribute('data-index') + ' 週';
+    var countdownWeek = ${totalWeeks} - Number(matched.getAttribute('data-index')) + 1;
+    weekEl.textContent = '倒數第 ' + countdownWeek + ' 週';
 
     var phaseSection = matched.closest('.phase');
     if (phaseSection) {
@@ -443,7 +444,7 @@ ${phasesHtml}
       if (link) link.classList.add('current');
     }
   } else if (diffDays <= 0) {
-    weekEl.textContent = '${totalWeeks} / ${totalWeeks} 週';
+    weekEl.textContent = '全部完成';
   } else {
     weekEl.textContent = '尚未開始';
   }

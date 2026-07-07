@@ -269,8 +269,8 @@
     <div class="countdown-row">
       <div class="metric"><b id="today-date">–</b><span>今天</span></div>
       <div class="metric"><b id="days-left">–</b><span>距會考還有</span></div>
-      <div class="metric"><b>10 場</b><span>考試階段（模考 4·段考 5·會考 1）</span></div>
-      <div class="metric"><b id="week-position">–</b><span>目前進度（共 46 週）</span></div>
+      <div class="metric"><b>10 階段</b><span>考試階段（模考 4·段考 5·會考 1）</span></div>
+      <div class="metric"><b id="week-position">–</b><span>倒數進度（共 46 週）</span></div>
     </div>
 
     <div class="principles">
@@ -870,7 +870,8 @@
     flag.textContent = '現在';
     dateCell.appendChild(flag);
 
-    weekEl.textContent = '第 ' + matched.getAttribute('data-index') + ' 週';
+    var countdownWeek = 46 - Number(matched.getAttribute('data-index')) + 1;
+    weekEl.textContent = '倒數第 ' + countdownWeek + ' 週';
 
     var phaseSection = matched.closest('.phase');
     if (phaseSection) {
@@ -878,7 +879,7 @@
       if (link) link.classList.add('current');
     }
   } else if (diffDays <= 0) {
-    weekEl.textContent = '46 / 46 週';
+    weekEl.textContent = '全部完成';
   } else {
     weekEl.textContent = '尚未開始';
   }
