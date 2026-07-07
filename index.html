@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>會考備考路線圖</title>
+<style>
+  :root {
+    --board: #262a24;
+    --board-deep: #1b1e19;
+    --board-line: #3a3f37;
+    --chalk: #f2efe3;
+    --chalk-dim: #b9b6a8;
+    --paper: #faf8f2;
+    --paper-line: #e4e0d2;
+    --ink: #2a2620;
+    --ink-dim: #6b6558;
+    --blue: #6f9cae;
+    --amber: #c98a3a;
+    --gold: #ab8620;
+    --redpen: #a8402f;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 {
+    font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .page { max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    background: var(--board);
+    color: var(--chalk);
+    margin: 0 -20px 28px;
+    padding: 40px 28px 32px;
+    border-bottom: 3px solid var(--board-deep);
+    position: relative;
+  }
+  .masthead::after {
+    content: "";
+    position: absolute;
+    left: 28px; right: 28px; bottom: 18px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--chalk-dim) 0 6px, transparent 6px 12px);
+    opacity: .35;
+  }
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: .14em;
+    color: var(--chalk-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .masthead h1 {
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 600;
+    color: var(--chalk);
+  }
+  .masthead .sub {
+    margin-top: 10px;
+    font-size: 15px;
+    color: var(--chalk-dim);
+    max-width: 62ch;
+  }
+  .countdown-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    margin-top: 22px;
+    font-size: 14px;
+  }
+  .countdown-row .metric b {
+    display: block;
+    font-family: "Noto Serif TC", serif;
+    font-size: 22px;
+    color: var(--chalk);
+    font-weight: 600;
+  }
+  .countdown-row .metric span { color: var(--chalk-dim); font-size: 12.5px; }
+
+  .principles {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .principle {
+    border: 1px solid var(--board-line);
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--chalk-dim);
+  }
+  .principle b { color: var(--chalk); display: block; margin-bottom: 3px; font-size: 13.5px; }
+
+  /* ---------- Contents nav ---------- */
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 36px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+  }
+  .toc-label { width: 100%; font-size: 12px; letter-spacing: .1em; color: var(--ink-dim); text-transform: uppercase; margin-bottom: 4px; }
+  .toc a {
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 4px 9px;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .toc a[data-type="模考"] { border-color: color-mix(in srgb, var(--blue) 45%, var(--paper-line)); }
+  .toc a[data-type="段考"] { border-color: color-mix(in srgb, var(--amber) 45%, var(--paper-line)); }
+  .toc a[data-type="會考"] { border-color: color-mix(in srgb, var(--gold) 55%, var(--paper-line)); font-weight: 600; }
+  .toc a:hover { background: var(--paper); }
+  .toc a.current { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* ---------- Phase module ---------- */
+  .phase { margin-bottom: 30px; scroll-margin-top: 16px; }
+
+  .nameplate {
+    background: var(--board);
+    color: var(--chalk);
+    border-radius: 5px 5px 0 0;
+    padding: 20px 24px;
+  }
+  .nameplate .top-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .phase-num {
+    font-family: "Noto Serif TC", serif;
+    font-size: 26px;
+    line-height: 1;
+  }
+  .nameplate h2 { font-size: 19px; color: var(--chalk); }
+  .type-pill {
+    font-size: 11.5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    letter-spacing: .04em;
+    margin-left: auto;
+  }
+  .type-pill[data-type="模考"] { background: color-mix(in srgb, var(--blue) 30%, transparent); color: #cfe1e8; border: 1px solid color-mix(in srgb, var(--blue) 55%, transparent); }
+  .type-pill[data-type="段考"] { background: color-mix(in srgb, var(--amber) 28%, transparent); color: #f0d3a8; border: 1px solid color-mix(in srgb, var(--amber) 55%, transparent); }
+  .type-pill[data-type="會考"] { background: color-mix(in srgb, var(--gold) 30%, transparent); color: #ecd68f; border: 1px solid color-mix(in srgb, var(--gold) 60%, transparent); }
+
+  .nameplate .meta {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--chalk-dim);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .nameplate .meta .tentative { color: #e0b2a6; }
+
+  .nameplate .goal {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--board-line);
+    font-size: 13.5px;
+    color: var(--chalk);
+    line-height: 1.65;
+  }
+  .nameplate .goal .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: var(--chalk-dim);
+    margin-right: 6px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Weekly sheet ---------- */
+  .sheet {
+    background: #fff;
+    border: 1px solid var(--paper-line);
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    padding: 6px 4px;
+  }
+  .week-row {
+    display: grid;
+    grid-template-columns: 116px 1fr;
+    gap: 4px 18px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--paper-line);
+    align-items: start;
+  }
+  .week-row:last-child { border-bottom: none; }
+  .week-row.is-now { background: color-mix(in srgb, var(--gold) 8%, transparent); }
+
+  .week-date {
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    padding-top: 2px;
+  }
+  .week-date .range { display: block; font-weight: 600; color: var(--ink); font-size: 13px; }
+  .now-flag {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    color: #fff;
+    background: var(--gold);
+    padding: 1.5px 7px;
+    border-radius: 999px;
+  }
+
+  .week-tasks { margin: 0; padding: 0; list-style: none; }
+  .week-tasks li {
+    position: relative;
+    padding-left: 14px;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .week-tasks li:last-child { margin-bottom: 0; }
+  .week-tasks li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 9px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--ink-dim);
+  }
+  .week-tasks li.urgent { color: var(--redpen); font-weight: 500; }
+  .week-tasks li.urgent::before { background: var(--redpen); }
+
+  @media (max-width: 560px) {
+    .week-row { grid-template-columns: 1fr; gap: 6px; }
+    .week-date { padding-top: 0; }
+  }
+
+  footer.note {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--paper-line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">2027 國中教育會考 · 10 考試階段備考路線圖</div>
+    <h1>從現在到考場，一週一週的路</h1>
+    <p class="sub">以下依 <code>exam_phases.json</code> 完整列出：從今天起，一直到會考前最後一週，每一週要做的事。模考順著會考長線走，段考切回學校課內，逢週日的休息不在此列（LINE 訊息另附）。</p>
+
+    <div class="countdown-row">
+      <div class="metric"><b>2026/07/07</b><span>本頁基準日</span></div>
+      <div class="metric"><b>312 天</b><span>距會考還有</span></div>
+      <div class="metric"><b>10 場</b><span>考試階段（模考 4·段考 5·會考 1）</span></div>
+      <div class="metric"><b>46 週</b><span>逐週任務</span></div>
+    </div>
+
+    <div class="principles">
+      <div class="principle"><b>模考不慌</b>跟著會考長線走就是驗收，不必另闢戰場。</div>
+      <div class="principle"><b>段考才切換</b>考前收斂到學校課內，考後 48 小時內訂正回歸。</div>
+      <div class="principle"><b>會考是主軸</b>每場考試都在替最後一天存底氣。</div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <span class="toc-label">跳至階段</span>
+    <a href="#p1" data-type="模考" class="current">① 第一次模考</a>
+    <a href="#p2" data-type="段考">② 第一次段考</a>
+    <a href="#p3" data-type="段考">③ 第二次段考</a>
+    <a href="#p4" data-type="模考">④ 第二次模考</a>
+    <a href="#p5" data-type="段考">⑤ 期末考</a>
+    <a href="#p6" data-type="模考">⑥ 第三次模考</a>
+    <a href="#p7" data-type="段考">⑦ 下學期第一次段考</a>
+    <a href="#p8" data-type="模考">⑧ 第四次模考</a>
+    <a href="#p9" data-type="段考">⑨ 畢業考</a>
+    <a href="#p10" data-type="會考">⑩ 正式會考</a>
+  </nav>
+
+  <main>
+
+    <!-- P1 -->
+    <section class="phase" id="p1">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">①</span>
+          <h2>第一次模考</h2>
+          <span class="type-pill" data-type="模考">模考</span>
+        </div>
+        <div class="meta"><span>2026/09/08–09/09</span><span>範圍：1-2 冊</span></div>
+        <p class="goal"><span class="tag">會考連結</span>模考①是暑假成果驗收，也是會考第一塊拼圖——1-2 冊（生物、地理、國一基礎）紮實了，會考自然/社會就先穩一塊。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row is-now">
+          <div class="week-date"><span class="range">07/01–07/07</span>W1<br><span class="now-flag">現在</span></div>
+          <ul class="week-tasks">
+            <li>複習第1冊國文（課文、字音字形）＋數學整數與分數運算</li>
+            <li>生物：細胞結構與物質進出；地理：台灣位置與疆域</li>
+            <li>英文單字 1-100、基礎八大詞性</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">07/08–07/14</span>W2</div>
+          <ul class="week-tasks">
+            <li>複習第1冊國文（成語、常識）＋數學一元一次方程式</li>
+            <li>生物：養分與光合作用；地理：台灣地形與海岸</li>
+            <li>英文單字 101-200、時態</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">07/15–07/21</span>W3</div>
+          <ul class="week-tasks">
+            <li>第1冊國文總複習與單元測驗＋數學總複習測驗</li>
+            <li>生物：循環系統；歷史：史前台灣與原住民族</li>
+            <li>英文單字 201-300</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">07/22–07/28</span>W4</div>
+          <ul class="week-tasks">
+            <li>複習第2冊國文（課文、字音字形）＋數學二元一次聯立方程式</li>
+            <li>生物：神經與內分泌；歷史：國際競爭與鄭氏治台</li>
+            <li>英文單字 301-400</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">07/29–08/04</span>W5</div>
+          <ul class="week-tasks">
+            <li>複習第2冊國文（成語、修辭）＋數學坐標與圖形</li>
+            <li>生物：恆定性；公民：自我成長與家庭</li>
+            <li>英文單字 401-500、被動語態</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">08/05–08/11</span>W6</div>
+          <ul class="week-tasks">
+            <li>複習第2冊國文（文言文閱讀）＋數學比與比例式</li>
+            <li>生物：生殖；公民：社會生活與規範</li>
+            <li>英文單字 501-600、比較級</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">08/12–08/18</span>W7</div>
+          <ul class="week-tasks">
+            <li>第2冊國文總複習＋數學一元一次不等式</li>
+            <li>生物：遺傳與基因；地理：台灣天氣與氣候</li>
+            <li>英文單字 601-700</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">08/19–08/25</span>W8</div>
+          <ul class="week-tasks">
+            <li>1-2 冊國文/數學綜合複習＋歷屆基礎題演練</li>
+            <li>生物：分類與生態系；歷史：清領政經變遷</li>
+            <li>英文單字 701-800、關係代名詞</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">08/26–09/01</span>W9</div>
+          <ul class="week-tasks">
+            <li>1-2 冊弱點單元盤點與錯題整理</li>
+            <li>各科做 1 回模考題型熟悉</li>
+            <li>英文單字 801-900、第一階段聽力</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">09/02–09/09</span>W10</div>
+          <ul class="week-tasks">
+            <li class="urgent">📣 模考衝刺週：1-2 冊全科計時演練、調整作息</li>
+            <li>只複習錯題與重點，模考當天放平常心當會考預演</li>
+            <li>考後 48h 內完成訂正，標記高風險單元</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P2 -->
+    <section class="phase" id="p2">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">②</span>
+          <h2>第一次段考</h2>
+          <span class="type-pill" data-type="段考">段考</span>
+        </div>
+        <div class="meta"><span>2026/10/14–10/15</span><span>範圍：學校課內</span></div>
+        <p class="goal"><span class="tag">會考連結</span>段考②考學校當前課內進度，與會考長線不同向——這階段以課內為主、會考複習為輔；考完訂正後回到會考 3-4 冊複習。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">09/10–09/16</span>W1</div>
+          <ul class="week-tasks">
+            <li>模考①訂正完畢後，本週起對齊學校課內新進度</li>
+            <li>每天整理當天課堂筆記與老師劃的重點</li>
+            <li>會考長線維持低量：每天 1 篇英文短文＋20 單字</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">09/17–09/23</span>W2</div>
+          <ul class="week-tasks">
+            <li>跟上學校課內進度，課本/講義習題當天做完</li>
+            <li>整理各科課內重點與公式卡</li>
+            <li>週末做 1 份課內小範圍自我檢測</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">09/24–09/30</span>W3</div>
+          <ul class="week-tasks">
+            <li>課內進度複習，弱科優先補強</li>
+            <li>把課內錯題抄到錯題本</li>
+            <li>維持會考英文單字與數學手感（少量）</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">10/01–10/07</span>W4</div>
+          <ul class="week-tasks">
+            <li>段考前 2 週：彙整課內考試範圍清單</li>
+            <li>各科做 1 回課內模擬卷、限時練習</li>
+            <li>訂正模擬卷錯題，標記易錯觀念</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">10/08–10/15</span>W5</div>
+          <ul class="week-tasks">
+            <li class="urgent">🔴 段考衝刺週：暫停會考長線新進度，全力課內</li>
+            <li>每天讀課內＋做歷年段考/講義題，考前一天備齊文具</li>
+            <li>考完 48h 內訂正，再回會考 3-4 冊複習</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P3 -->
+    <section class="phase" id="p3">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">③</span>
+          <h2>第二次段考</h2>
+          <span class="type-pill" data-type="段考">段考</span>
+        </div>
+        <div class="meta"><span>2026/12/02–12/03</span><span>範圍：學校課內</span></div>
+        <p class="goal"><span class="tag">會考連結</span>段考③同樣是課內檢查點（多為第 5 冊新進度）；用課內把第 5 冊學紮實，等於替會考先存好一塊新範圍。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">10/16–10/22</span>W1</div>
+          <ul class="week-tasks">
+            <li>段考②訂正回歸：本週起對齊學校第 5 冊新進度</li>
+            <li>會考長線回溫：每週挑 1-2 冊做綜合複習</li>
+            <li>每天整理課內筆記</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">10/23–10/29</span>W2</div>
+          <ul class="week-tasks">
+            <li>跟上課內進度，當天習題當天清</li>
+            <li>會考長線：歷屆閱讀/克漏字各 1 回</li>
+            <li>錯題本持續累積</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">10/30–11/05</span>W3</div>
+          <ul class="week-tasks">
+            <li>課內進度複習＋弱科補強</li>
+            <li>會考長線：1-2 冊易錯點回顧</li>
+            <li>數學維持每天 5 題手感</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">11/06–11/12</span>W4</div>
+          <ul class="week-tasks">
+            <li>課內中段複習，整理重點卡</li>
+            <li>會考長線：3-4 冊重要課文/觀念回顧</li>
+            <li>英文聽力每週 1 回</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">11/13–11/19</span>W5</div>
+          <ul class="week-tasks">
+            <li>段考前 2 週：彙整課內範圍清單</li>
+            <li>各科 1 回課內限時練習＋訂正</li>
+            <li>弱科再補一輪</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">11/20–11/26</span>W6</div>
+          <ul class="week-tasks">
+            <li>課內加強，聚焦老師劃重點與課本例題</li>
+            <li>做歷年段考題/講義題</li>
+            <li>課內錯題回收</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">11/27–12/03</span>W7</div>
+          <ul class="week-tasks">
+            <li class="urgent">🔴 段考衝刺週：暫停會考長線，全力課內</li>
+            <li>每天課內複習＋限時練習，備齊文具</li>
+            <li>考完 48h 訂正，回歸會考並準備第二次模考</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P4 -->
+    <section class="phase" id="p4">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">④</span>
+          <h2>第二次模考</h2>
+          <span class="type-pill" data-type="模考">模考</span>
+        </div>
+        <div class="meta"><span>2026/12/23–12/24</span><span>範圍：1-4 冊</span></div>
+        <p class="goal"><span class="tag">會考連結</span>模考④範圍 1-4 冊，是會考第二塊大驗收——直接用會考長線複習成果應戰，考後訂正就是你的會考弱點清單。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">12/04–12/10</span>W1</div>
+          <ul class="week-tasks">
+            <li>段考③訂正後，全面轉入會考 1-4 冊複習</li>
+            <li>國文/數學各做 1 回 1-4 冊綜合題</li>
+            <li>英文歷屆閱讀＋聽力各 1 回</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">12/11–12/17</span>W2</div>
+          <ul class="week-tasks">
+            <li>1-4 冊弱科加強：理化力學、自然圖表</li>
+            <li>各科模擬題 1 回並訂正</li>
+            <li>錯題本聚焦 1-4 冊高風險單元</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">12/18–12/24</span>W3</div>
+          <ul class="week-tasks">
+            <li class="urgent">📣 模考衝刺週：1-4 冊全科計時演練</li>
+            <li>只複習錯題與重點，模考當會考預演</li>
+            <li>考後 48h 訂正，整理 1-4 冊弱點</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P5 -->
+    <section class="phase" id="p5">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑤</span>
+          <h2>第三次段考（期末考）</h2>
+          <span class="type-pill" data-type="段考">段考</span>
+        </div>
+        <div class="meta"><span>2027/01/19–01/20</span><span>範圍：學校課內</span></div>
+        <p class="goal"><span class="tag">會考連結</span>段考⑤是上學期期末（課內收尾）；穩住期末等於把上學期課內收乾淨，寒假才能安心衝會考總複習。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">12/25–12/31</span>W1</div>
+          <ul class="week-tasks">
+            <li>模考④訂正後，對齊學校期末課內範圍</li>
+            <li>會考長線維持低量：錯題本＋單字</li>
+            <li>整理各科課內重點</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">2027/01/01–01/07</span>W2</div>
+          <ul class="week-tasks">
+            <li>跟上期末複習進度，課本/講義習題清完</li>
+            <li>各科課內重點卡彙整</li>
+            <li>弱科優先補強</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">01/08–01/14</span>W3</div>
+          <ul class="week-tasks">
+            <li>期末前：彙整課內考試範圍，做 1 回課內模擬</li>
+            <li>訂正模擬卷錯題</li>
+            <li>維持會考英文/數學手感</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">01/15–01/20</span>W4</div>
+          <ul class="week-tasks">
+            <li class="urgent">🔴 期末衝刺週：暫停會考長線，全力課內</li>
+            <li>每天課內複習＋限時練習，備齊文具</li>
+            <li>考完進入寒假，立刻轉會考總複習</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P6 -->
+    <section class="phase" id="p6">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑥</span>
+          <h2>第三次模考</h2>
+          <span class="type-pill" data-type="模考">模考</span>
+        </div>
+        <div class="meta"><span>2027/02/18–02/19</span><span>範圍：1-5 冊</span></div>
+        <p class="goal"><span class="tag">會考連結</span>模考⑥範圍 1-5 冊，是寒假彎道超車的驗收——寒假把弱科補起來，模考就是檢查成效，也是會考前的大型總演練。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">01/21–01/27</span>W1</div>
+          <ul class="week-tasks">
+            <li>寒假開始：期末訂正後全面轉入會考 1-5 冊複習</li>
+            <li>每天固定時段，弱科優先（理化、地科）</li>
+            <li>國文虛字句型、英文閱讀理解專練</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">01/28–02/03</span>W2</div>
+          <ul class="week-tasks">
+            <li>1-5 冊弱科突擊：理化力學/電磁、地科總複習</li>
+            <li>數學幾何（相似形、圓）專題演練</li>
+            <li>各科歷屆分類演練 1 回</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">02/04–02/10</span>W3</div>
+          <ul class="week-tasks">
+            <li>🧧 春節輕量維持：錯題本＋單字，不排重課表</li>
+            <li>每天 30-60 分鐘保持手感即可</li>
+            <li>年後收心準備模考衝刺</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">02/11–02/19</span>W4</div>
+          <ul class="week-tasks">
+            <li class="urgent">📣 開學收心＋模考衝刺：1-5 冊全科計時演練</li>
+            <li>模考當會考預演，考後 48h 訂正</li>
+            <li>整理 1-5 冊弱點，銜接 3 月總複習</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P7 -->
+    <section class="phase" id="p7">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑦</span>
+          <h2>下學期第一次段考</h2>
+          <span class="type-pill" data-type="段考">段考</span>
+        </div>
+        <div class="meta"><span>2027/03/30–03/31</span><span class="tentative">範圍：學校課內（暫定，待學校公布校正）</span></div>
+        <p class="goal"><span class="tag">會考連結</span>段考⑦（暫定）是下學期第一次課內檢查；此時會考總複習已啟動，用課內做一次記憶回收即可，重心仍在會考考古題。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">02/20–02/26</span>W1</div>
+          <ul class="week-tasks">
+            <li>模考⑥訂正後，會考總複習與課內並行</li>
+            <li>會考：每週 1 套歷屆考古題起跑</li>
+            <li>對齊學校下學期課內進度</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">02/27–03/05</span>W2</div>
+          <ul class="week-tasks">
+            <li>會考總複習為主：1-6 冊滾動複習</li>
+            <li>課內維持：當天筆記與習題</li>
+            <li>建立錯題防錯筆記</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">03/06–03/12</span>W3</div>
+          <ul class="week-tasks">
+            <li>會考：考古題 1 套＋訂正</li>
+            <li>課內重點整理、弱科補強</li>
+            <li>寫作真題 1 篇</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">03/13–03/19</span>W4</div>
+          <ul class="week-tasks">
+            <li>會考：考古題 1 套＋寫作真題</li>
+            <li>課內限時練習 1 回</li>
+            <li>錯題回收</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">03/20–03/26</span>W5</div>
+          <ul class="week-tasks">
+            <li>段考前：課內範圍彙整，做課內模擬</li>
+            <li>會考考古題維持 1 套</li>
+            <li>訂正課內錯題</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">03/27–03/31</span>W6</div>
+          <ul class="week-tasks">
+            <li class="urgent">🔴 段考衝刺週（暫定）：用課內做記憶回收</li>
+            <li>考完 48h 訂正，立即回會考全面衝刺</li>
+            <li>※段考日期待學校公布後校正</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P8 -->
+    <section class="phase" id="p8">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑧</span>
+          <h2>第四次模考</h2>
+          <span class="type-pill" data-type="模考">模考</span>
+        </div>
+        <div class="meta"><span>2027/04/15–04/16</span><span>範圍：1-6 冊（全）</span></div>
+        <p class="goal"><span class="tag">會考連結</span>模考⑧範圍 1-6 冊（全），是會考前最關鍵的全範圍實戰演練——這場等同會考預演，務必計時、模擬真實考場。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">04/01–04/08</span>W1</div>
+          <ul class="week-tasks">
+            <li>段考⑦後全力會考總複習：1-6 冊考古題每週 1 套</li>
+            <li>各科錯題防錯筆記第一輪檢討、寫作真題 1 篇</li>
+            <li>聚焦曾錯兩次以上的觀念</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">04/09–04/16</span>W2</div>
+          <ul class="week-tasks">
+            <li class="urgent">📣 模考衝刺週：1-6 冊全真計時演練，完全模擬會考</li>
+            <li>各科限時演練＋訂正，調整時間分配</li>
+            <li>考後 48h 訂正——會考前最後一次大型驗收</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P9 -->
+    <section class="phase" id="p9">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑨</span>
+          <h2>下學期第二次段考／畢業考</h2>
+          <span class="type-pill" data-type="段考">段考</span>
+        </div>
+        <div class="meta"><span>2027/04/29–05/05</span><span class="tentative">範圍：學校課內（暫定，待學校公布校正）</span></div>
+        <p class="goal"><span class="tag">會考連結</span>段考⑨（畢業考，暫定）是課內最後一次回收；考完只保留 1 天訂正就立刻回會考節奏，別讓畢業考打斷會考手感。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">04/17–04/23</span>W1</div>
+          <ul class="week-tasks">
+            <li>模考⑧訂正後，會考錯題本第一輪總檢討</li>
+            <li>會考：每天維持各科手感與考古題</li>
+            <li>對齊畢業考課內範圍</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">04/24–04/30</span>W2</div>
+          <ul class="week-tasks">
+            <li class="urgent">🔴 畢業考衝刺（暫定）：課內回收，不碰新難題</li>
+            <li>會考長線維持，不中斷</li>
+            <li>備齊文具；勞動節補假(4/30)適度休息</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">05/01–05/05</span>W3</div>
+          <ul class="week-tasks">
+            <li>畢業考期間只做課內複習與錯題回收</li>
+            <li>考完保留 1 天訂正，立即回會考節奏</li>
+            <li>※畢業考日期待學校公布後校正</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- P10 -->
+    <section class="phase" id="p10">
+      <div class="nameplate">
+        <div class="top-row">
+          <span class="phase-num">⑩</span>
+          <h2>2027 國中教育會考</h2>
+          <span class="type-pill" data-type="會考">會考</span>
+        </div>
+        <div class="meta"><span>2027/05/15–05/16</span><span>範圍：1-6 冊（全）</span></div>
+        <p class="goal"><span class="tag">會考連結</span>最後階段！所有模考段考都化為這一刻的底氣。只看錯題本與基本觀念，穩住作息與心態，相信十個月的累積。</p>
+      </div>
+      <div class="sheet">
+        <div class="week-row">
+          <div class="week-date"><span class="range">05/06–05/12</span>W1</div>
+          <ul class="week-tasks">
+            <li>臨考衝刺：作息調到與會考同步（08:30-16:00 最清醒）</li>
+            <li>只複習錯題防錯筆記與基本觀念，不碰刁鑽新題</li>
+            <li>每天各科維持少量手感題</li>
+          </ul>
+        </div>
+        <div class="week-row">
+          <div class="week-date"><span class="range">05/13–05/14</span>W2<br><span class="now-flag" style="background:var(--redpen)">考前當週</span></div>
+          <ul class="week-tasks">
+            <li class="urgent">黃金最後衝刺（考前 2 天）：備齊文具與准考證（2B鉛筆、橡皮擦、黑筆、直尺、圓規）</li>
+            <li>看考場、確認交通；早睡早起</li>
+            <li>放鬆心情，相信自己！</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="note">
+    <p>會考正式日期 2027/05/15（六）–05/16（日）依 116 年公文暫訂；⑦⑨兩場下學期段考日期仍為暫定窗口，待學校行事曆公告後校正，屆時本頁與 LINE 通知會同步更新。資料來源：<code>exam_phases.json</code>（10 考試階段制）。</p>
+  </footer>
+
+</div>
+</body>
+</html>
